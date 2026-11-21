@@ -1,0 +1,1 @@
+{"mission_id":"dlss5","rerun":true,"approval_mode":"default","target":{"all":[{"present":"*.exe","except":["unins*","crash*","report*","setup*","install*","launcher*","vc_redist*","dxsetup*"],"depth":2}]},"stores":{"target":"keyed","machine":"keyed","knowledge":"keyed"},"post_run_checks":["display-targets"]}
