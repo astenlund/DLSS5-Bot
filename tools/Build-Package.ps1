@@ -38,7 +38,7 @@ if ($identity.EngineSha256 -cne $engineSha256) { throw "The package engine $($id
 if ($identity.Sha256 -cne $identity.PublishedSha256 -or $identity.MissionId -cne 'dlss5') { throw 'The package is not a published DLSS package.' }
 if ($source.kind -ceq 'pin' -and $identity.Version -ne [int]$pin.engine_version) { throw "The vendored engine is version $($identity.Version), but its pin names $($pin.engine_version)." }
 # Assembly embeds every file in the mission folder, so the record says whether that folder matched this repository's HEAD.
-$missionStatus = @(& git -C $repository status --porcelain --untracked-files=all -- mission-dlss5)
+$missionStatus = @(& git -C $repository status --porcelain --untracked-files=all --ignored -- mission-dlss5)
 if ($LASTEXITCODE -ne 0) { throw "Git cannot read the status of $repository" }
 $utf8 = [Text.UTF8Encoding]::new($false)
 [IO.File]::WriteAllText($package + '.sha256', $identity.Sha256 + '  DLSS5-ADDER.cmd' + "`n", $utf8)
