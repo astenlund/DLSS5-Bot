@@ -1,0 +1,27 @@
+# Lighter post-review gate
+
+`Invoke-PostReviewChecks.ps1` always runs the full candidate suite, about 74 minutes for v67, whatever the release changes. Replace it with a smaller set, so a release waits for the cases selected as reachable from its change plus a small rotating sample, and every case still runs regularly. Connected to [Release suite in CI](ci-release-suite.md), which would move the full pass off this machine instead.
+
+## Settled design
+
+- Scope: every release, engine changes included. The user accepts the risk of a regression in a case the release does not select (2026-11-20).
+- The targeted set is the union of:
+  - the cases in the release folder's `changed-cases.md`;
+  - every case the baseline carry rules in `Invoke-BaselineSuite.ps1` would rerun against the previous release's `candidate-results.json` when the package hash is left out of the comparison (the candidate's bytes change every release, so that key would always force a full run). The rules kept are the shared key (the test code outside the cases, the helper and runner scripts and the historical packages the tests read), the per-test-file keys and the hello-world base key, plus the reruns of `# live-input` cases. Where those rules call for a full run (a changed shared key, a test file with no earlier results, a test file whose cases were all removed, or a changed base that code outside a named case reads), the targeted set is the whole suite;
+  - the cases or test files the agent building the release selects from what the release changed in the engine and the mission, by the same judgment that picks its filtered runs during implementation, each written with a one-line reason into the release folder beside `changed-cases.md` and assessed for sufficiency by the code reviewer. The carry rules key on test inputs, not on the code under test, and the `dlss5` mission's files reach them only through the package hash, and the engine only through it and the hello-world base rebuilt on it, whose readers rerun anyway, so for an engine or mission change this selection is what picks the affected cases;
+  - a rotating sample of 10% of the suite's cases, rounded up, chosen from the cases nothing else selects in that release as those whose last run on candidate bytes is oldest; a case with no recorded run counts as stalest. The sample counts cases rather than minutes, so slow cases are not starved. When fewer than that many cases are left unselected, all of them run. Because the sample, counted over the whole suite, takes that many of the stalest unselected cases each release, and every record keeps each case's last run, carried cases included, a case runs at least once in every ten consecutive gated releases.
+- Coverage: the candidate suite's coverage check (`Invoke-BaselineSuite.ps1 -RecordFrom ... -ValidateOnly`, which today refuses a filtered run and requires every declared case) applies to the merged result of the run and the carried cases.
+- Unchanged checks: the interop suite, the hello-world base test, the launch function comparison, the `Invoke-BaselineSuite.ps1` refresh and the baseline comparison stay as they are.
+- Full-run fallback: `-Full`, or no usable record (missing, unreadable, of other bytes than the previous candidate's, or with a failed case or a guard failure), keeps the full candidate suite.
+- Record: `candidate-results.json` records, per case, whether it ran on this candidate's bytes or was carried, and when it last ran on candidate bytes, so the rotation can pick the stalest. A carried case keeps its earlier outcome and time.
+- Next baseline: the next release's baseline may start from such a mixed record, carrying its carried cases as passing (user decision, 2026-11-20). `Find-CandidateRecord` accepts a record of those exact bytes whose every case passed, ran or carried, and which has no guard failures, and `-RecordFrom`, or whatever replaces it for the targeted run, records the merged result rather than refusing a filtered run. A regression in a carried case therefore hides from the baseline as well as from the candidate suite until the rotation or a selection runs it, and the baseline's `NOTE` lines say how many of the cases it started from were carried.
+- `AGENTS.md`: the Publication section changes with it, at least in the Test before review step's description of where the baseline starts, the Review step's assessment of the selection, and the Full checks step.
+
+## Open questions
+
+- Where the agent's selection lives (its own file or a section of `changed-cases.md`), its format, whether a missing selection refuses the post-review checks or counts as selecting nothing, and how the post-review checks ensure they run the selection the reviewer assessed (today they guard only the candidate's bytes, through `reviewed-candidate.sha256.txt`).
+- Whether the first targeted release, whose previous record is v67's full-run `candidate-results.json` without the ran-or-carried marker (it already holds each case's `ranAt`), reads it as a usable start or falls back to a full run.
+- How the record identifies the bytes a carried case last ran on (a candidate hash per case, or only its time), and how the baseline comparison treats a case that was carried in the candidate record.
+- How `Test-BaselineSuite.ps1` covers the mixed record, the rotation's choice and the full-run fallbacks.
+
+Captured 2026-11-20 as a quick win. Graduated 2026-11-20 with the scope, set, record and next-baseline decisions above.
