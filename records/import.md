@@ -33,7 +33,7 @@ The other nine retained files are byte-identical to the LocalAppData copies: `Ho
 
 Retired, and not imported:
 
-- The standalone v23 suites (`Test-DLSS5V23.ps1` and the eleven `Test-DLSS5V23*.ps1` files it runs), their three `Invoke-DLSS5V23*Fixture.ps1` helpers, the v24 suite `Test-DLSS5V24.ps1`, and the v23 hand-off in `Test-DLSS5Adder.ps1`. They are pinned to the historical v23 and v24 candidates in the archive, and no current release reaches them.
+- The standalone v23 suites, `Test-DLSS5V23.ps1` and the eleven files it runs (`Test-DLSS5V23Adoption.ps1`, `Test-DLSS5V23Agents.ps1`, `Test-DLSS5V23Channels.ps1`, `Test-DLSS5V23Foundation.ps1`, `Test-DLSS5V23Ledger.ps1`, `Test-DLSS5V23Release.ps1`, `Test-DLSS5V23Remote.ps1`, `Test-DLSS5V23Startup.ps1`, `Test-DLSS5V23Storage.ps1`, `Test-DLSS5V23Trust.ps1` and `Test-DLSS5V23Workflow.ps1`), their three helpers (`Invoke-DLSS5V23AgentFixture.ps1`, `Invoke-DLSS5V23ArgumentFixture.ps1` and `Invoke-DLSS5V23LockFixture.ps1`), the v24 suite `Test-DLSS5V24.ps1`, and the v23 hand-off in `Test-DLSS5Adder.ps1`. They are pinned to the historical v23 and v24 candidates in the archive, and no current release reaches them.
 - `Test-DLSS5GithubDiscovery.ps1`, which only the historical v24 release folder's `Verify-Artifacts.ps1` ran; no suite file and no later release script runs it (searched across the LocalAppData folder, archive included).
 
 ## Release scripts
@@ -52,6 +52,10 @@ The legacy v67 release folder's scripts were per-release copies with version, ha
 
 - `research/` is the LocalAppData `research\` folder, with this machine's home folder in the recorded paths generalized to `<user>`; once step 1 acceptance passes, its unaltered originals move to the archive's `development\research-originals\`.
 - The backlog's DLSS release procedure entries ("Release suite in CI" and "Lighter post-review gate") live here. The entries that span the engine and this mission, and every history entry recorded before this repository existed, are in Pluri-Bot's backlog, which this backlog points at.
+
+## LocalAppData cleanup
+
+These steps wait until the repositories are public and step 1 acceptance passes, and each is checked then: the originals of the four changed test files and every retired test file move into the archive's `development\retired-tests\`, and the LocalAppData `tests\` folder is removed; the `research\` originals move into `development\research-originals\`; the LocalAppData backlog is reduced to a pointer at the two repositories; the AppData `AGENTS.md` keeps only what a game session needs and points at the repositories; the `~/AGENTS.md` bullet that directs gist publication to the AppData `AGENTS.md` is repointed at this repository's Publication section (that file is gist-backed, so the edit is flagged for a gist sync); and the project's per-project agent memories move to the memory folder of the clone whose subject they concern.
 
 ## Privacy sweep
 

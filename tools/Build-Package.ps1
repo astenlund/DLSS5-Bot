@@ -7,7 +7,7 @@ $ErrorActionPreference = 'Stop'
 
 # Builds the DLSS package from the mission and an engine. By default the engine is the vendored engine file, which must match its pin.
 # With -PluriBotTree the engine is joined from that Pluri-Bot working tree instead, for building and testing an unreleased engine, and the
-# build record names the tree's commit and whether it was clean. Publication accepts only a build from the pinned engine.
+# build record names the tree's commit and whether it was clean. From v1-1, publication accepts only a build from the pinned engine.
 $repository = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 $null = New-Item -ItemType Directory -Force -Path $OutputDirectory
