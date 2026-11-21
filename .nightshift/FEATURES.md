@@ -109,6 +109,7 @@ These entries concern the engine as well as this mission, so they are tracked in
 - [Composable AI bootstrap builder](https://github.com/astenlund/Pluri-Bot/blob/main/.nightshift/features/composable-bootstrap-builder.md), whose Repository home slice moved this mission here.
 - [Non-interactive mode](https://github.com/astenlund/Pluri-Bot/blob/main/.nightshift/features/non-interactive-mode.md), whose DLSS sessions record visual verification as pending.
 - [Mod configuration sibling](https://github.com/astenlund/Pluri-Bot/blob/main/.nightshift/features/mod-configuration-sibling.md), a sibling mission that reads this mission's notes.
+- [Engine cases in Pluri-Bot](https://github.com/astenlund/Pluri-Bot/blob/main/.nightshift/features/engine-cases-in-pluri-bot.md), which moves this repository's engine test cases into Pluri-Bot.
 
 ## History
 
