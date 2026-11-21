@@ -13,18 +13,20 @@ $ErrorActionPreference = 'Stop'
 # to match and the file to be an engine form, reads the engine version from it and the commit from the tag, and rewrites the vendored
 # engine and its pin together, so an engine update is one reviewable commit. Nothing is written until every check has passed.
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+# Pluri-Bot tags its engine releases v<engine>, and the imported engine legacy-v67.
+if ($Tag -cnotmatch '^(legacy-)?v[1-9][0-9]*$') { throw "Not a Pluri-Bot engine release tag: $Tag" }
 $work = Join-Path $root ('.tmp\pin-' + [Guid]::NewGuid().ToString('N'))
 $null = New-Item -ItemType Directory -Force -Path $work
 try {
     if ($FromDirectory.Length -gt 0) {
-        if ($Commit -notmatch '^[0-9a-f]{40}$') { throw '-FromDirectory needs -Commit, the full commit hash the tag marks.' }
+        if ($Commit -cnotmatch '^[0-9a-f]{40}$') { throw '-FromDirectory needs -Commit, the full lowercase commit hash the tag marks.' }
         foreach ($name in @('engine.cmd', 'engine.cmd.sha256')) { Copy-Item -LiteralPath (Join-Path $FromDirectory $name) -Destination (Join-Path $work $name) }
     }
     else {
         & gh release download $Tag --repo $Repository --pattern 'engine.cmd' --pattern 'engine.cmd.sha256' --dir $work
         if ($LASTEXITCODE -ne 0) { throw "Downloading release $Tag of $Repository failed." }
         $Commit = (& gh api ('repos/' + $Repository + '/commits/' + $Tag) --jq '.sha' | Out-String).Trim()
-        if ($LASTEXITCODE -ne 0 -or $Commit -notmatch '^[0-9a-f]{40}$') { throw "The commit of tag $Tag could not be read." }
+        if ($LASTEXITCODE -ne 0 -or $Commit -cnotmatch '^[0-9a-f]{40}$') { throw "The commit of tag $Tag could not be read." }
     }
     $engine = Join-Path $work 'engine.cmd'
     $published = (([IO.File]::ReadAllText((Join-Path $work 'engine.cmd.sha256'))).Trim() -split '\s+')[0].ToLowerInvariant()
