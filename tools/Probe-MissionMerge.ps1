@@ -1,4 +1,4 @@
-param([string]$Candidate = (Join-Path $PSScriptRoot '..\build\DLSS5-ADDER.cmd'), [string]$RecordDirectory = (Join-Path $env:LOCALAPPDATA 'DLSS5-ADDER\release-records\probes'), [string[]]$Hosts = @('claude', 'codex'))
+param([string]$Candidate = (Join-Path $PSScriptRoot '..\build\DLSS5-ADDER.cmd'), [string[]]$Hosts = @('claude', 'codex'), [string]$RecordDirectory = (Join-Path $env:LOCALAPPDATA 'DLSS5-ADDER\release-records\probes'))
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
