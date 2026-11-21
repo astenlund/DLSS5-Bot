@@ -1,0 +1,4 @@
+# Differences the import expects between the release suite run from DLSS5-Bot and legacy v67's recorded candidate results.
+# The hello-world base cases moved to Pluri-Bot, which runs them against its own base (tests/Test-PluriBotBase.ps1 there).
+absent package hello-world base shares the engine and runs as a plain mission
+absent guard holds the hello-world base folder too
